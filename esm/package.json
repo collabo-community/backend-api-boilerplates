@@ -2,10 +2,10 @@
   "name": "node-mongo-api-boilerplate-template-esm",
   "version": "1.0.0",
   "description": "@code-collabo node-mongo API boilerplate template - es module",
-  "main": "src/server.[atlas/local].js",
+  "main": "src/server.js",
   "scripts": {
-    "dev:local": "nodemon --exec babel-node src/server.local.js",
-    "dev:atlas": "nodemon --exec babel-node src/server.atlas.js",
+    "dev:local": "nodemon --exec babel-node src/server.js",
+    "dev:atlas": "nodemon --exec babel-node src/server.js",
     "lint": "esw src --color",
     "lint:watch": "npm run lint -- --watch",
     "dev:restore": "node -r esm node-mongo.js",
