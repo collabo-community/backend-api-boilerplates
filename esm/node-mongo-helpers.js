@@ -1,6 +1,9 @@
 import { spawn } from 'child_process';
 import package_json from './package.json';
 import chalk from 'chalk';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /* eslint-disable no-console */
 
@@ -15,6 +18,34 @@ export const warning = (message) => {
 
 export const error = (message) => {
   console.log( chalk.redBright(message) );
+}
+
+
+const npmLifeCycleEvent = process.env.npm_lifecycle_event;
+
+export const connectionType = () => {
+  const startScript = {
+    atlas: npmLifeCycleEvent === 'dev:atlas',
+    local: npmLifeCycleEvent === 'dev:local',
+  };
+
+  let connectionChoice = { port: '', uri: '' };
+
+  if (startScript.atlas) {
+    connectionChoice = {
+      port: process.env.PORT_ATLAS,
+      uri: process.env.MONGODB_ATLAS_URI,
+    };
+  }
+
+  if (startScript.local) {
+    connectionChoice = {
+      port: process.env.PORT_LOCAL,
+      uri: process.env.MONGODB_LOCAL_URI,
+    };
+  }
+
+  return connectionChoice;
 }
 
 // DB connect
