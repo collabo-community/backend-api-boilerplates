@@ -1,7 +1,8 @@
 import mongooseConnect from './db.connect';
 import { app as app } from './app';
+import { connectionType } from '../node-mongo-helpers';
 
-const port = process.env.PORT_ATLAS || 3000;
+const port = connectionType().port || 3000;
 
 app.listen(port, () => {
   mongooseConnect(port);
