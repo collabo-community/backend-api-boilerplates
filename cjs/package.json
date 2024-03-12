@@ -4,7 +4,6 @@
   "description": "@code-collabo node-mongo API boilerplate template - common js",
   "main": "src/server.[atlas/local].js",
   "scripts": {
-    "dev": "node -r esm node-mongo.js",
     "dev:local": "nodemon --exec node src/server.local.js",
     "dev:atlas": "nodemon --exec node src/server.atlas.js",
     "lint": "esw src --color",
@@ -15,7 +14,6 @@
   "author": "Obiagba Mary",
   "license": "ISC",
   "dependencies": {
-    "@code-collabo/node-mongo-scripts": "^1.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "esm": "^3.2.25",
