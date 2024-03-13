@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
-const { afterDBconnectSuccessful, connectToDBunsuccessful } = require('../node-mongo-helpers');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const { connectionType, afterDBconnectSuccessful, connectToDBunsuccessful } = require('../node-mongo-helpers');
 
 const mongooseConnect = async function(port) {
   try {
-    await mongoose.connect(`${process.env.MONGODB_ATLAS_URI}`);
+    await mongoose.connect(`${connectionType().uri}`);
     afterDBconnectSuccessful(port);
   } catch (err) {
     connectToDBunsuccessful(err);

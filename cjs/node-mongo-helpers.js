@@ -21,8 +21,7 @@ const error = (message) => {
 }
 
 
-const npmLifeCycleEvent = process.env.npmLifeCycleEvent;
-console.log(npmLifeCycleEvent);
+const npmLifeCycleEvent = process.env.npm_lifecycle_event;
 
 const connectionType = () => {
   const startScript = {
