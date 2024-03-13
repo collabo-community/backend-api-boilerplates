@@ -7,9 +7,7 @@
     "dev:local": "nodemon --exec node src/server.local.js",
     "dev:atlas": "nodemon --exec node src/server.atlas.js",
     "lint": "esw src --color",
-    "lint:watch": "npm run lint -- --watch",
-    "dev:restore": "node -r esm node-mongo.js",
-    "dev:change": "node -r esm node-mongo.js"
+    "lint:watch": "npm run lint -- --watch"
   },
   "author": "Obiagba Mary",
   "license": "ISC",
