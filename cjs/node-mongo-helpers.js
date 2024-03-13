@@ -1,6 +1,9 @@
 const { spawn } = require('child_process');
 const package_json = require('./package.json');
 const chalk = require('chalk');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 /* eslint-disable no-console */
 
@@ -16,6 +19,36 @@ const warning = (message) => {
 const error = (message) => {
   console.log( chalk.redBright(message) );
 }
+
+
+const npmLifeCycleEvent = process.env.npmLifeCycleEvent;
+console.log(npmLifeCycleEvent);
+
+const connectionType = () => {
+  const startScript = {
+    atlas: npmLifeCycleEvent === 'dev:atlas',
+    local: npmLifeCycleEvent === 'dev:local',
+  };
+
+  let connectionChoice = { port: '', uri: '' };
+
+  if (startScript.atlas) {
+    connectionChoice = {
+      port: process.env.PORT_ATLAS,
+      uri: process.env.MONGODB_ATLAS_URI,
+    };
+  }
+
+  if (startScript.local) {
+    connectionChoice = {
+      port: process.env.PORT_LOCAL,
+      uri: process.env.MONGODB_LOCAL_URI,
+    };
+  }
+
+  return connectionChoice;
+}
+
 
 // DB connect
 const watchEslint = () => {
@@ -37,13 +70,8 @@ const eslintAndServer = (serverPort) => {
   server(serverPort);
 }
 
-const afterAtlasDBconnectSuccessful = (serverPort) => {
-  success('\nConnected to mongoDB ATLAS');
-  eslintAndServer(serverPort);
-}
-
-const afterLocalDBconnectSuccessful = (serverPort) => {
-  success('\nConnected to LOCAL mongoDB');
+const afterDBconnectSuccessful = (serverPort) => {
+  success('\nConnected to mongoDB');
   eslintAndServer(serverPort);
 }
 
@@ -60,7 +88,7 @@ module.exports = {
   error,
   watchEslint,
   server,
-  afterAtlasDBconnectSuccessful,
-  afterLocalDBconnectSuccessful,
+  afterDBconnectSuccessful,
   connectToDBunsuccessful,
+  connectionType,
 };

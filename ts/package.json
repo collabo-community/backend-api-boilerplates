@@ -4,8 +4,8 @@
   "description": "@code-collabo node-mongo API boilerplate template - typescript",
   "main": "src/server.[atlas/local].ts",
   "scripts": {
-    "dev:local": "nodemon --exec ts-node src/server.local.ts",
-    "dev:atlas": "nodemon --exec ts-node src/server.atlas.ts",
+    "dev:local": "nodemon --exec ts-node src/server.ts",
+    "dev:atlas": "nodemon --exec ts-node src/server.ts",
     "lint": "esw src --ext .ts --color",
     "lint:watch": "npm run lint -- --watch"
   },
