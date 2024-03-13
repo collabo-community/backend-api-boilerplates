@@ -1,6 +1,9 @@
 import { spawn } from 'child_process';
 import package_json from './package.json';
 import chalk from 'chalk';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /* eslint-disable no-console */
 
@@ -16,6 +19,38 @@ export const warning = (message: string) => {
 export const error = (message: string) => {
   console.log( chalk.redBright(message) );
 }
+
+
+const npmLifeCycleEvent = process.env.npm_lifecycle_event;
+
+export const connectionType = () => {
+  const startScript = {
+    atlas: npmLifeCycleEvent === 'dev:atlas',
+    local: npmLifeCycleEvent === 'dev:local',
+  };
+
+  let connectionChoice: {
+    port: string | number;
+    uri: string;
+  } = { port: '', uri: '' };
+
+  if (startScript.atlas) {
+    connectionChoice = {
+      port: process.env.PORT_ATLAS as string | number,
+      uri: process.env.MONGODB_ATLAS_URI as string,
+    };
+  }
+
+  if (startScript.local) {
+    connectionChoice = {
+      port: process.env.PORT_LOCAL as string | number,
+      uri: process.env.MONGODB_LOCAL_URI as string,
+    };
+  }
+
+  return connectionChoice;
+}
+
 
 // DB connect
 export const npmRunPackageJsonScript = ({ script, currentWorkingDir } : { script: string, currentWorkingDir: string }): void => {
@@ -37,13 +72,8 @@ const eslintAndServer = (serverPort: number | string) => {
   server(serverPort);
 }
 
-export const afterAtlasDBconnectSuccessful = (serverPort: number | string) => {
-  success('\nConnected to mongoDB ATLAS');
-  eslintAndServer(serverPort);
-}
-
-export const afterLocalDBconnectSuccessful = (serverPort: number | string) => {
-  success('\nConnected to LOCAL mongoDB');
+export const afterDBconnectSuccessful = (serverPort: number | string) => {
+  success('\nConnected to mongoDB');
   eslintAndServer(serverPort);
 }
 
