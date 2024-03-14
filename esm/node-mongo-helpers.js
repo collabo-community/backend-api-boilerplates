@@ -23,12 +23,12 @@ export const error = (message) => {
 
 const npmLifeCycleEvent = process.env.npm_lifecycle_event;
 
-export const connectionType = () => {
-  const startScript = {
-    atlas: npmLifeCycleEvent === 'dev:atlas',
-    local: npmLifeCycleEvent === 'dev:local',
-  };
+const startScript = {
+  atlas: npmLifeCycleEvent === 'dev:atlas',
+  local: npmLifeCycleEvent === 'dev:local',
+};
 
+export const connectionType = () => {
   let connectionChoice = { port: '', uri: '' };
 
   if (startScript.atlas) {
@@ -69,19 +69,11 @@ const eslintAndServer = (serverPort) => {
 }
 
 export const afterDBconnectSuccessful = (serverPort) => {
-  let serverType = "";
-  const startScript = {
-    atlas: npmLifeCycleEvent === 'dev:atlas',
-    local: npmLifeCycleEvent === 'dev:local',
-  };
-  if (startScript.atlas) {
-    serverType = "ATLAS";
+  const serverType = {
+    atlas: startScript.atlas ? 'ATLAS' : '',
+    local: startScript.local ? 'LOCAL ' : '',
   }
-
-  else if (startScript.local) {
-    serverType = "LOCAL";
-  }
-  success(`\nConnected to mongoDB ${serverType}`);
+  success(`\nConnected to ${serverType.local}mongoDB ${serverType.atlas}`);
   eslintAndServer(serverPort);
 }
 
