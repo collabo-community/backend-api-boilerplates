@@ -73,7 +73,19 @@ const eslintAndServer = (serverPort: number | string) => {
 }
 
 export const afterDBconnectSuccessful = (serverPort: number | string) => {
-  success('\nConnected to mongoDB');
+  let serverType = "";
+  const startScript = {
+    atlas: npmLifeCycleEvent === 'dev:atlas',
+    local: npmLifeCycleEvent === 'dev:local',
+  };
+  if (startScript.atlas) {
+    serverType = "ATLAS";
+  }
+
+  else if (startScript.local) {
+    serverType = "LOCAL";
+  }
+  success(`\nConnected to mongoDB ${serverType}`);
   eslintAndServer(serverPort);
 }
 
