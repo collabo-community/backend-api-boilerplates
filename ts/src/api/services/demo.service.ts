@@ -1,3 +1,5 @@
+import { BadRequestError } from '../exceptions/errors/BadRequestError';
+import { NotFoundError } from '../exceptions/errors/NotFoundError';
 import { DemoDocument, DemoModel as Demo } from '../models/demo.model';
 
 export const getDemoItemsService = async () => {
@@ -15,29 +17,47 @@ export const createDemoItemService = async (requestBody: DemoDocument): Promise<
 }
 
 export const getOneDemoItemService = async (paramsId: string) => {
-  const query = Demo.findById(paramsId).select('_id name age').exec();
+  const query = await Demo.findById(paramsId).select('_id name age').exec();
+  if(!query){
+    throw new NotFoundError('No record found for provided ID');
+  }
   return query;
 }
 
 export const deleteDemoItemService = async (paramsId: string) => {
   const query = await Demo.deleteOne({ _id: paramsId }).exec();
+  if (query.deletedCount < 1){
+    throw new NotFoundError('No record found for provided ID to be deleted')
+  }
   return query;
 }
 
 export const updateOneDemoItemPropertyValueService = async (paramsId: string, requestBody: { propName: string, value: string }[]) => {
-  const updateOps: Record<string, string> = {};
-  for (const ops of requestBody) {
-    updateOps[ops.propName] = ops.value;
+  const query = await Demo.findById(paramsId).select('_id name age').exec();
+  if(!query){
+    throw new NotFoundError('No record found for provided ID');
   }
-  const query = await Demo.updateOne({ _id: paramsId }, { $set: updateOps }).exec();
-  return query;
+
+  for (const ops of requestBody) {
+    if(!(ops.propName in query)){
+      throw new BadRequestError(`invalid property: ${ops.propName}`);
+    }
+    query[ops.propName as keyof DemoDocument] = ops.value as never;
+  }
+
+  const updatedQuery = await query.save();
+  return updatedQuery;
 };
 
 export const updateDemoItemPropertyValuesService = async (paramsId: string, requestBody: DemoDocument) => {
-  const resetItem = {
-    name: requestBody.name,
-    age: requestBody.age,
-  };
-  const query = await Demo.findByIdAndUpdate(paramsId, { $set: resetItem }, { new: true }).exec();
-  return query;
+  const query = await Demo.findById(paramsId).select('_id name age').exec();
+  if(!query){
+    throw new NotFoundError('No record found for provided ID');
+  }
+
+  query.name = requestBody.name;
+  query.age = requestBody.age;
+
+  const updatedQuery = await query.save();
+  return updatedQuery;
 };
