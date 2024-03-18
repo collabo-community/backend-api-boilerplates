@@ -1,7 +1,11 @@
+import 'express-async-errors';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
+import { errorHandler } from './api/exceptions/ErrorHandler';
+import { CustomErrorInterface } from './api/exceptions/CustomError';
+import { NotFoundError } from './api/exceptions/errors/NotFoundError';
 import { router as appRouter } from './api/routes/app.route';
 import { router as demoRouter } from './api/routes/demo.route';
 
@@ -21,24 +25,19 @@ app.use('/', appRouter);
 app.use('/demo', demoRouter);
 //==========================
 
-interface Error {
-  status?: number;
-  message: string;
-}
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const err: Error = new Error('Route not found!');
-  err.status = 404;
-  next(err);
+//========= Throw Route Not Found Error ==========
+app.use(() => {
+  throw new NotFoundError("Route Not Found")
 });
+//==========================================
 
-app.use((err: Error, req: Request, res: Response) => {
-  res.status(err.status || 500);
-  res.json({
-    error: {
-      message: err.message
-    }
-  });
+
+//====== Error handler Middleware ==========
+app.use((err: CustomErrorInterface, req: Request, res: Response, next: NextFunction) => {
+  errorHandler.handleError(err, res);
+  next()
 });
+//==========================================
 
 export { app };
