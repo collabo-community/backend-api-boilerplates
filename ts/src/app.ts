@@ -3,9 +3,9 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
-import { errorHandler } from './api/exceptions/ErrorHandler';
-import { CustomErrorInterface } from './api/exceptions/CustomError';
-import { NotFoundError } from './api/exceptions/errors/NotFoundError';
+import { errorHandler } from './lib/errors/ErrorHandler';
+import { CustomErrorInterface } from './lib/errors/CustomError';
+import { notFoundErr } from './lib/errors/Errors';
 import { router as appRouter } from './api/routes/app.route';
 import { router as demoRouter } from './api/routes/demo.route';
 
@@ -28,7 +28,7 @@ app.use('/demo', demoRouter);
 
 //========= Throw Route Not Found Error ==========
 app.use(() => {
-  throw new NotFoundError("Route Not Found")
+  notFoundErr("Route Not Found")
 });
 //==========================================
 
