@@ -18,7 +18,7 @@ class BadRequestError extends CustomError {
 interface ThrowError {
   notFoundErr: (message: string) => void;
   badRequestErr: (message: string) => void;
-};
+}
 
 const throwError: ThrowError = {
   notFoundErr: (message) => { throw new NotFoundError(message); },
