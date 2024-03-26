@@ -1,5 +1,4 @@
-import { BadRequestError } from '../exceptions/errors/BadRequestError';
-import { NotFoundError } from '../exceptions/errors/NotFoundError';
+import { badRequestErr, notFoundErr } from '../../lib/errors/Errors';
 import { DemoDocument, DemoModel as Demo } from '../models/demo.model';
 
 export const getDemoItemsService = async () => {
@@ -19,7 +18,7 @@ export const createDemoItemService = async (requestBody: DemoDocument): Promise<
 export const getOneDemoItemService = async (paramsId: string) => {
   const query = await Demo.findById(paramsId).select('_id name age').exec();
   if(!query){
-    throw new NotFoundError('No record found for provided ID');
+    notFoundErr('No record found for provided ID');
   }
   return query;
 }
@@ -27,7 +26,7 @@ export const getOneDemoItemService = async (paramsId: string) => {
 export const deleteDemoItemService = async (paramsId: string) => {
   const query = await Demo.deleteOne({ _id: paramsId }).exec();
   if (query.deletedCount < 1){
-    throw new NotFoundError('No record found for provided ID to be deleted')
+    notFoundErr('No record found for provided ID to be deleted')
   }
   return query;
 }
@@ -35,12 +34,12 @@ export const deleteDemoItemService = async (paramsId: string) => {
 export const updateOneDemoItemPropertyValueService = async (paramsId: string, requestBody: { propName: string, value: string }[]) => {
   const query = await Demo.findById(paramsId).select('_id name age').exec();
   if(!query){
-    throw new NotFoundError('No record found for provided ID');
+    notFoundErr('No record found for provided ID');
   }
 
   for (const ops of requestBody) {
     if(!(ops.propName in query)){
-      throw new BadRequestError(`invalid property: ${ops.propName}`);
+      badRequestErr(`invalid property: ${ops.propName}`);
     }
     query[ops.propName as keyof DemoDocument] = ops.value as never;
   }
@@ -52,7 +51,7 @@ export const updateOneDemoItemPropertyValueService = async (paramsId: string, re
 export const updateDemoItemPropertyValuesService = async (paramsId: string, requestBody: DemoDocument) => {
   const query = await Demo.findById(paramsId).select('_id name age').exec();
   if(!query){
-    throw new NotFoundError('No record found for provided ID');
+    notFoundErr('No record found for provided ID');
   }
 
   query.name = requestBody.name;
